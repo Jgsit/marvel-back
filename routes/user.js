@@ -142,18 +142,35 @@ router.put("/favoris", async (req, res) => {
 });
 
 router.get("/favoris", async (req, res) => {
-  const { token } = req.query;
+  const { token, name } = req.query;
   try {
     const user = await User.findOne({ token: token });
     if (user) {
-      res
+      if (name) {
+        const allFavoris = user.favoris;
+        const favoris = [];
+        for (let i = 0; i < allFavoris.length; i++) {
+          if (allFavoris[i].name?.toLowerCase().includes(name)) {
+            favoris.push(allFavoris[i]);
+          }
+          if (allFavoris[i].title?.toLowerCase().includes(name)) {
+            favoris.push(allFavoris[i]);
+          }
+        }
+        return res
+          .status(200)
+          .json({ count: user.favoris.length, favoris: favoris });
+      }
+      return res
         .status(200)
         .json({ count: user.favoris.length, favoris: user.favoris });
     } else {
-      res.status(400).json({ message: "Pas d'utilisateur avec ce token" });
+      return res
+        .status(400)
+        .json({ message: "Pas d'utilisateur avec ce token" });
     }
   } catch (error) {
-    res.status(500).json({ message: error.message });
+    return res.status(500).json({ message: error.message });
   }
 });
 module.exports = router;
