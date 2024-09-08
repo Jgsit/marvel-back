@@ -12,7 +12,7 @@ app.use(cors());
 
 // import mongoose
 const mongoose = require("mongoose");
-mongoose.connect("mongodb://localhost:27017/marvel");
+mongoose.connect(process.env.MONGODB_URI);
 
 // import de mes routeurs
 const charaterRoutes = require("./routes/character");
